@@ -1,6 +1,6 @@
-<div >
+<div>
   <h1>{{title}}</h1>
-  <div  class="content-container">
+  <div class="content-container">
     <div class="input-grid">
       <mat-form-field>
         <input matInput placeholder="What needs to be done?" [(ngModel)]="taskName">
@@ -8,14 +8,19 @@
       <mat-form-field>
         <input matInput placeholder="set task priority" [(ngModel)]="priority">
       </mat-form-field>
-      <a mat-primary-button (click)="addTask()" class="item-button">
+      <button mat-primary-button (click)="addTask()" class="align-item-grid-center" [disabled]="!taskName || !priority">
         <mat-icon>add</mat-icon>
-      </a>
+      </button>
     </div>
-    <div class="list-grid" *ngFor="let task of taskList | keyvalue">
+
+    <div tabindex="0" class="list-grid" *ngFor="let task of taskList | keyvalue"
+      (keydown)="focusOnListItem($event,task)">
+      <mat-checkbox [checked]="task.value.isChecked" (change)="task.value.isChecked =  true;"
+        class="align-item-grid-center">
+      </mat-checkbox>
       <div *ngIf="!task.value.isEditMode; else editMode" class="label-grid">
-        <div mat-line (dblclick)="task.value.isEditMode = true">{{task.value.name}}</div>
-        <span mat-line> {{task.value.priority}}</span>
+        <div mat-line (dblclick)="task.value.isEditMode = true" class="saved-task-label">{{task.value.name}}</div>
+        <div mat-line (dblclick)="task.value.isEditMode = true" class="saved-task-label"> {{task.value.priority}}</div>
       </div>
       <ng-template #editMode>
         <div class="label-grid">
@@ -27,11 +32,11 @@
           </mat-form-field>
         </div>
       </ng-template>
-      <div layut="row" class="last-grid-item">
+      <div layut="row" class="align-item-grid-center">
         <a *ngIf="!task.value.isEditMode" mat-button (click)="task.value.isEditMode = true;">
           <mat-icon>edit</mat-icon>
         </a>
-        <a mat-button *ngIf="task.value.isEditMode" mat-button (click)="saveChanges(task)">
+        <a mat-button *ngIf="task.value.isEditMode" (click)="saveChanges(task)">
           <mat-icon>save</mat-icon>
         </a>
         <a mat-button (click)="removeTask(task)">
@@ -39,6 +44,11 @@
         </a>
       </div>
 
+    </div>
+    <div class="delete-button">
+      <a mat-raised-button (click)="deleteAllSelectedItems()">
+        DELETE SELECTED
+      </a>
     </div>
   </div>
 </div>
